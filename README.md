@@ -13,6 +13,7 @@ Welcome to the OmegaTech Game Engine, a simple game engine inspired by the graph
 - Incredibly Fast Graphics 
 - Easy Portability 
 - Video Playback
+- Custom Scripting Langauge
 
 ## Getting Started
 
@@ -46,7 +47,8 @@ To use the OmegaTech Game Engine, follow these steps:
 
 5. **Explore the code**: Open the project in your favorite text editor or integrated development environment (IDE) to explore and modify the source code according to your needs.
 
-6. **Start developing**: Customize the game by modifying the source code. You can create new levels, add new sprites, implement game mechanics, and more.
+6. **Start developing**: Customize the game by modifying the source code. You can create new levels, implement game mechanics, and more.
+7. **Note**: Make sure GameData Folder and Engine Executable are in the Same folder.
 
 ## Contributing
 
