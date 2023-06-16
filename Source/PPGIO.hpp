@@ -284,6 +284,7 @@ static Input OmegaInputController;
 #ifdef __linux__
 
 void Rumble(int duration){
+    
 }
 
 #endif

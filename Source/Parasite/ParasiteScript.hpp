@@ -177,14 +177,21 @@ int PullIntFromMemory(string VaribleName){
     if (!Found){
         cout << "Error Varible Not Declared: " << VaribleName << "\n";
         ParasiteScriptCoreData.ErrorFlag = true;
+        return 0;
     }
 }
 
 string PullStrFromMemory(string VaribleName){
+    bool Found = false;
     for (int x = 0 ; x <= VaribleCounter; x++){
         if (VaribleMemory[x].Name == VaribleName){
+            Found = true;
             return VaribleMemory[x].Value;
         }
+    }
+    if (!Found){
+        ParasiteScriptCoreData.ErrorFlag = true;
+        return "";
     }
 }
 
@@ -553,12 +560,10 @@ auto CycleInstruction(){
                     FoundInstruction = true;
                     if (IsNumber(SplitValue(Instruction, 2))){
                         StoreIntToMemory(SplitValue(Instruction, 0) , StringToInt(SplitValue(Instruction, 2)));
-                        if (Debug)cout << "set: " << StringToInt(SplitValue(Instruction, 2)) << "\n";
                     }
                     else {
                         int Value = PullIntFromMemory(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , Value);
-                        if (Debug)cout << "set: " << Value << "\n";
                     }
                 }
 
@@ -567,13 +572,10 @@ auto CycleInstruction(){
                     if (IsNumber(SplitValue(Instruction, 2))){
                         int Value = StringToInt(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) + Value);
-
-                        if (Debug)cout << "add: " << PullIntFromMemory(SplitValue(Instruction, 0))+ Value << "\n";
                     }
                     else{
                         int Value = PullIntFromMemory(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) + Value);
-                        if (Debug)cout << "add: " << PullIntFromMemory(SplitValue(Instruction, 0))+ Value << "\n";
                     }
                 }
 
@@ -582,12 +584,10 @@ auto CycleInstruction(){
                     if (IsNumber(SplitValue(Instruction, 2))){
                         int Value = StringToInt(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) - Value);
-                        if (Debug)cout << "sub: " << PullIntFromMemory(SplitValue(Instruction, 0)) - Value << "\n";
                     }
                     else{
                         int Value = PullIntFromMemory(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) - Value);
-                        if (Debug)cout << "sub: " << PullIntFromMemory(SplitValue(Instruction, 0)) - Value << "\n";
                     }
                 }
 
@@ -596,12 +596,10 @@ auto CycleInstruction(){
                     if (IsNumber(SplitValue(Instruction, 2))){
                         int Value = StringToInt(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) * Value);
-                        if (Debug)cout << "mul: " << PullIntFromMemory(SplitValue(Instruction, 0)) * Value << "\n";
                     }
                     else{
                         int Value = PullIntFromMemory(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) * Value);
-                        if (Debug)cout << "mul: " << PullIntFromMemory(SplitValue(Instruction, 0)) * Value << "\n";
                     }
                 }
 
@@ -610,12 +608,10 @@ auto CycleInstruction(){
                     if (IsNumber(SplitValue(Instruction, 2))){
                         int Value = StringToInt(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) / Value);
-                        if (Debug)cout << "div: " << PullIntFromMemory(SplitValue(Instruction, 0)) / Value << "\n";
                     }
                     else{
                         int Value = PullIntFromMemory(SplitValue(Instruction, 2));
                         StoreIntToMemory(SplitValue(Instruction, 0) , PullIntFromMemory(SplitValue(Instruction, 0)) / Value);
-                        if (Debug)cout << "div: " << PullIntFromMemory(SplitValue(Instruction, 0)) / Value << "\n";
                     }
                 }
 
@@ -723,16 +719,11 @@ auto CycleInstruction(){
                     string VaribleData = SplitValue(Instruction, 2 );
                     int VaribleType = 0;
 
-                    if (Debug)cout << RedText << "VD: " << VaribleData << " ";
-
                     if (ReadValue(VaribleData , 0 , 0) == "'"){
-                        if (Debug)cout << "String Type\n";
                         VaribleType = 1;
                     }
                     else {
-                        if (Debug)cout << "Int Type\n";
                         VaribleType = 0;
-
                     }
                     
                     if (VaribleType == 1){
@@ -742,7 +733,6 @@ auto CycleInstruction(){
                                 StoredData += ReadValue(VaribleData , i , i);
                             }
                         }
-                        if (Debug)cout << "Parsed String: " << StoredData << "\n"; 
                         VaribleMemory[VaribleCounter].Value = StoredData;
                         VaribleMemory[VaribleCounter].IValue = 0;
                     }

@@ -48,6 +48,7 @@ int main(){
                 Direction = 3;
             }
         }
+
         FadeColor = (Color){R, G, B, 255};
     
 
@@ -58,7 +59,7 @@ int main(){
 
         ClearBackground(BLACK);
 
-        DrawTexturePro(Target.texture, (Rectangle){ 0, 0, Target.texture.width, -Target.texture.height }, (Rectangle){ 0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){ 0, 0 } , 0.f , WHITE);
+        DrawTexturePro(Target.texture, (Rectangle){ 0, 0, Target.texture.width, -Target.texture.height }, (Rectangle){ 0, 0, float(GetScreenWidth()), float(GetScreenHeight())}, (Vector2){ 0, 0 } , 0.f , WHITE);
         UpdateObjectBar();
         EndShaderMode();
 
@@ -79,9 +80,7 @@ int main(){
 
         EndDrawing();
 
-        if (IsKeyPressed(KEY_F11)){
-            ToggleFullscreen();
-        }
+        if (IsKeyPressed(KEY_F11))ToggleFullscreen();
 
     }
     

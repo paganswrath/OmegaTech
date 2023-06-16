@@ -17,46 +17,42 @@ class ParticleSystem;
 
 class EngineData
 {
-public:
-    int LevelIndex = 1;
-    Camera MainCamera = {0};
-    Shader PixelShader;
-    Shader FogShader;
-    Shader LineShader;
-    Shader ToonShader;
-    Shader SobelShader;
-    Shader Lights;
-    Light GameLights[MAX_LIGHTS];
+    public:
+        int LevelIndex = 1;
+        Camera MainCamera = {0};
+        Shader PixelShader;
+        Shader FogShader;
+        Shader LineShader;
+        Shader ToonShader;
+        Shader SobelShader;
+        Shader Lights;
+        Light GameLights[MAX_LIGHTS];
 
-    ParticleSystem RainParticles;
-    Texture HomeScreen;
-    ray_video_t HomeScreenVideo;
-    Music HomeScreenMusic;
+        ParticleSystem RainParticles;
+        Texture HomeScreen;
+        ray_video_t HomeScreenVideo;
+        Music HomeScreenMusic;
 
-    ray_video_t Ending1Video;
-    ray_video_t Ending2Video;
-    Sound Ending2Music;
+        bool FirstLoad = true;
 
-    bool FirstLoad = true;
+        int Ticker = 0;
+        int CameraSpeed = 1;
+        int RenderRadius = 800;
+        int Deaths;
+        bool UseCachedRenderer = false;
+        int BadPreformaceCounter = 0;
+        bool SkyboxEnabled = false;
+        int Ending = 0;
+        int PanicCounter = 0;
 
-    int Ticker = 0;
-    int CameraSpeed = 1;
-    int RenderRadius = 800;
-    int Deaths;
-    bool UseCachedRenderer = false;
-    int BadPreformaceCounter = 0;
-    bool SkyboxEnabled = false;
-    int Ending = 0;
-    int PanicCounter = 0;
-
-    void InitCamera()
-    {
-        MainCamera.position = (Vector3){0.0f, 0.0f, 0.0f};
-        MainCamera.target = (Vector3){0.0f, 10.0f, 0.0f};
-        MainCamera.up = (Vector3){0.0f, 1.0f, 0.0f};      
-        MainCamera.fovy = 60.0f;                        
-        MainCamera.projection = CAMERA_PERSPECTIVE;
-    }
+        void InitCamera()
+        {
+            MainCamera.position = (Vector3){0.0f, 0.0f, 0.0f};
+            MainCamera.target = (Vector3){0.0f, 10.0f, 0.0f};
+            MainCamera.up = (Vector3){0.0f, 1.0f, 0.0f};      
+            MainCamera.fovy = 60.0f;                        
+            MainCamera.projection = CAMERA_PERSPECTIVE;
+        }
 };
 
 static EngineData OmegaTechData;
@@ -99,10 +95,12 @@ void SpawnWDLProcess(const char *Path)
             OmegaEnemy[EntityCounter].Scream = false;
             EntityCounter++;
         }
+
         if (Instruction == L"Light")
         {
             PutLight({ToFloat(WSplitValue(WData, i + 1)) , ToFloat(WSplitValue(WData, i + 2)) , ToFloat(WSplitValue(WData, i + 3))});
         }
+
         i += 3;
     }
 }
@@ -263,6 +261,7 @@ auto LoadWorld()
             WDLModels.Model5 = LoadModel(TextFormat("GameData/Worlds/World%i/Models/Model5.obj", OmegaTechData.LevelIndex));
             WDLModels.Model5Texture = LoadTexture(TextFormat("GameData/Worlds/World%i/Models/Model5Texture.png", OmegaTechData.LevelIndex));
             WDLModels.Model5.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = WDLModels.Model5Texture;
+            WDLModels.Model5.materials[0].shader = OmegaTechData.Lights;
         }
         else {
             if (WDLModels.Model5.meshCount != 0){
@@ -582,6 +581,7 @@ void LoadLaunchConfig()
         break;
     }
 }
+
 int LightCounter = 1;
 
 void UpdateLightSources(){
@@ -682,6 +682,9 @@ void OmegaTechInit()
         WDLModels.FastModel5.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = WDLModels.FastModel5Texture;
         WDLModels.FastModel5.materials[0].shader = OmegaTechData.Lights;
     }
+
+    OmegaTechData.GameLights[0] = CreateLight(LIGHT_DIRECTIONAL, { OmegaTechData.MainCamera.position.x, OmegaTechData.MainCamera.position.y, OmegaTechData.MainCamera.position.z }, Vector3Zero(), WHITE, OmegaTechData.Lights);
+
     Target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     InitObjects();
@@ -757,9 +760,9 @@ void PlayHomeScreen()
         }
         EndTextureMode();
         BeginDrawing();
-        // BeginShaderMode(OmegaTechData.LineShader);
+
         DrawTexturePro(Target.texture, (Rectangle){0, 0, Target.texture.width, -Target.texture.height}, (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){0, 0}, 0.f, WHITE);
-        // EndShaderMode();
+
         EndDrawing();
 
         if (IsKeyPressed(KEY_ESCAPE))exit(0);
@@ -835,7 +838,6 @@ void CacheWDL()
 
         if (WReadValue(Instruction, 0, 11) == L"AdvCollision")
         {
-            //OtherWDLData += WSplitValue(WData, i) + L":" + WSplitValue(WData, i + 1) + L":" + WSplitValue(WData, i + 2) + L":" + WSplitValue(WData, i + 3) + L":" + WSplitValue(WData, i + 4) + L":" + WSplitValue(WData, i + 5) + L":" + WSplitValue(WData, i + 6) + L":" + WSplitValue(WData, i + 7) + L":" + WSplitValue(WData, i + 8) + L":";
             CachedCollision[CachedCollisionCounter].X =  ToFloat(WSplitValue(WData, i + 1));
             CachedCollision[CachedCollisionCounter].Y =  ToFloat(WSplitValue(WData, i + 2));
             CachedCollision[CachedCollisionCounter].Z =  ToFloat(WSplitValue(WData, i + 3));
@@ -1157,15 +1159,18 @@ void WDLProcess()
                                         
             if (Instruction == L"NE1"){
                 AudioValue = FlipNumber(GetDistance( X , Z, OmegaTechData.MainCamera.position.x , OmegaTechData.MainCamera.position.z));
-                if (AudioValue > 0)SetMusicVolume(OmegaTechSoundData.NESound1 , float(AudioValue) / 100.0f);
+                if (AudioValue > 0 && AudioValue < 100)SetMusicVolume(OmegaTechSoundData.NESound1 , float(AudioValue) / 100.0f);
+                else {SetMusicVolume(OmegaTechSoundData.NESound1 , 0);}
             }
             if (Instruction == L"NE2"){
                 AudioValue = FlipNumber(GetDistance( X , Z, OmegaTechData.MainCamera.position.x , OmegaTechData.MainCamera.position.z));
-                if (AudioValue > 0)SetMusicVolume(OmegaTechSoundData.NESound2 ,  float(AudioValue) / 100.0f);
+                if (AudioValue > 0 && AudioValue < 100)SetMusicVolume(OmegaTechSoundData.NESound2 ,  float(AudioValue) / 100.0f);
+                else {SetMusicVolume(OmegaTechSoundData.NESound2 , 0);}
             }
             if (Instruction == L"NE3"){
                 AudioValue = FlipNumber(GetDistance( X , Z, OmegaTechData.MainCamera.position.x , OmegaTechData.MainCamera.position.z));
-                if (AudioValue > 0)SetMusicVolume(OmegaTechSoundData.NESound3 ,  float(AudioValue) / 100.0f);
+                if (AudioValue > 0 && AudioValue < 100)SetMusicVolume(OmegaTechSoundData.NESound3 ,  float(AudioValue) / 100.0f);
+                else {SetMusicVolume(OmegaTechSoundData.NESound3 , 0);}
             }
 
             
@@ -1242,7 +1247,7 @@ void WDLProcess()
             }
         }
         if (Instruction == L"ClipBox")
-        { // Collision
+        { 
 
                 W = ToFloat(WSplitValue(WData, i + 6));
                 H = ToFloat(WSplitValue(WData, i + 7));
@@ -1387,8 +1392,6 @@ void UpdateEntities()
 
 void UpdatePlayer()
 {
-
-
     if (IsKeyDown(KEY_W) || GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y) != 0 && !Debug)
     {
         if (HeadBob)
@@ -1995,7 +1998,6 @@ void DrawWorld()
 
     if (Debug)
     {
-        //UpdateEditor();
         DrawLights();
     }
     else
