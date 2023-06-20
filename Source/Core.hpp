@@ -618,6 +618,7 @@ void OmegaTechInit()
     GuiLoadStyleDark();
 
     OmegaTechData.InitCamera();
+
     OmegaTechData.PixelShader = LoadShader(0, "GameData/Shaders/Pixel.fs");
     OmegaTechData.FogShader = LoadShader(0, "GameData/Shaders/Fog.fs");
     OmegaTechData.LineShader = LoadShader(0, "GameData/Shaders/Scanlines.fs");
@@ -633,9 +634,9 @@ void OmegaTechInit()
     SetShaderValue(OmegaTechData.Lights, AmbientLoc, ambient, SHADER_UNIFORM_VEC4);
 
 
-    OmegaTechData.HomeScreen = LoadTexture("GameData/Global/Title/Title.png");
-    OmegaTechData.HomeScreenVideo = ray_video_open("GameData/Global/Title/Title.mpg");
-    OmegaTechData.HomeScreenMusic = LoadMusicStream("GameData/Global/Title/Title.mp3");
+    if (IsPathFile("GameData/Global/Title/Title.png"))OmegaTechData.HomeScreen = LoadTexture("GameData/Global/Title/Title.png");
+    if (IsPathFile("GameData/Global/Title/Title.mpg"))OmegaTechData.HomeScreenVideo = ray_video_open("GameData/Global/Title/Title.mpg");
+    if (IsPathFile("GameData/Global/Title/Title.mp3"))OmegaTechData.HomeScreenMusic = LoadMusicStream("GameData/Global/Title/Title.mp3");
 
     OmegaTechTextSystem.Bar = LoadTexture("GameData/Global/TextBar.png");
     OmegaTechTextSystem.BarFont = LoadFont("GameData/Global/Font.ttf");
@@ -709,7 +710,7 @@ void PlayHomeScreen()
 
         ClearBackground(BLACK);
 
-        ray_video_update(&OmegaTechData.HomeScreenVideo, GetFrameTime());
+        if (IsPathFile("GameData/Global/Title/Title.mpg"))ray_video_update(&OmegaTechData.HomeScreenVideo, GetFrameTime());
 
         DrawTextureEx(OmegaTechData.HomeScreenVideo.texture, {0, 0}, 0, 5, WHITE);
         DrawTexture(OmegaTechData.HomeScreen, 0, 0, WHITE);
@@ -723,7 +724,6 @@ void PlayHomeScreen()
         {
             UnloadRenderTexture(Target);
             Target = LoadRenderTexture(GetScreenWidth() / 4, GetScreenHeight() / 4);
-
             break;
         }
 
@@ -739,7 +739,9 @@ void PlayHomeScreen()
             }
             break;
         }
+        
         GuiLine(LayoutRecs[2], NULL);
+
         if (GuiButton(LayoutRecs[3], "Settings"))
         {
             if (MenuSettings)

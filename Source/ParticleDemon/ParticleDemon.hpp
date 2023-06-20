@@ -103,7 +103,7 @@ class ParticleSystem{
                         DrawPixel(ParticleArray[i].x - XOff , ParticleArray[i].y - YOff , ORANGE);
                         break;
                     case 2:
-                        DrawPixel(ParticleArray[i].x - XOff , ParticleArray[i].y - YOff , WHITE);
+                        DrawPixel(ParticleArray[i].x - XOff , ParticleArray[i].y - YOff , BLUE);
                     
                         break;
                     case 3:
