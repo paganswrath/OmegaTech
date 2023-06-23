@@ -1,5 +1,7 @@
 # OmegaTech Engine
 
+Editor Here - > https://github.com/PixelPhobicGames/OTEditor
+
 Welcome to the OmegaTech Game Engine, a simple game engine inspired by the graphical style of the original PlayStation (PS1) console. This engine is built using the powerful and lightweight **raylib** library, providing a straightforward and efficient way to create retro-style games.
 
 ## Features
