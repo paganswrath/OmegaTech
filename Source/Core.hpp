@@ -2,6 +2,7 @@
 
 #include "raymath.h"
 #include "rlights/rlights.h"
+#include "Custom/OTCustom.hpp"
 
 bool FloorCollision = true;
 bool ObjectCollision = false;
@@ -722,7 +723,7 @@ void PlayHomeScreen()
         if (GuiButton(LayoutRecs[0], "Start New Game"))
         {
             UnloadRenderTexture(Target);
-            Target = LoadRenderTexture(GetScreenWidth() / 4, GetScreenHeight() / 4);
+            Target = LoadRenderTexture(320 , 240);
 
             break;
         }
@@ -730,7 +731,7 @@ void PlayHomeScreen()
         if (GuiButton(LayoutRecs[1], "Load Save"))
         {
             UnloadRenderTexture(Target);
-            Target = LoadRenderTexture(GetScreenWidth() / 4, GetScreenHeight() / 4);
+            Target = LoadRenderTexture(320 , 240);
 
             if (IsPathFile("GameData/Saves/TF.sav"))
             {
@@ -1992,9 +1993,7 @@ void DrawWorld()
 
     UpdatePlayer();
 
-    UpdateCustom();
 
-    EndShaderMode();
 
     if (Debug)
     {
@@ -2012,6 +2011,10 @@ void DrawWorld()
         ObjectCollision = false;
     }
 
+    UpdateCustom();
+
+    EndShaderMode();
+    
     EndMode3D();
     EndTextureMode();
 
@@ -2044,7 +2047,4 @@ void DrawWorld()
 }
 
 
-void UpdateCustom()
-{
 
-}

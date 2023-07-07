@@ -5,6 +5,7 @@ COMP = g++
 
 OBJS = raygui.o \
   Encoder.o \
+  OTCustom.so \
   Main.o
 
 COREHEADERS = Source/Core.hpp \
@@ -19,6 +20,14 @@ OTENGINE: $(OBJS)
 Main.o: Source/Main.cpp Source/*.hpp Source/Parasite/*.hpp
 	$(COMP) $(CFLAGS) -c Source/Main.cpp $(LDFLAGS)
 
+# Compiles .so for Custom Engine Behavior
+
+OTCustom.so: Source/Custom/OTCustom.cpp 
+	$(COMP) $(CFLAGS) -c Source/Custom/OTCustom.cpp $(LDFLAGS)
+	$(COMP) $(CFLAGS) -shared OTCustom.o -o Custom.so
+	rm OTCustom.o
+
+
 Encoder.o: Source/Encoder/Encoder.cpp
 	$(COMP) $(CFLAGS) -c Source/Encoder/Encoder.cpp $(LDFLAGS)
 
@@ -27,4 +36,4 @@ raygui.o: Source/raygui/raygui.c
 
 
 OTENGINE:
-	$(COMP) $(OBJS) -o OmegaTech $(CFLAGS) $(LDFLAGS)
+	$(COMP) *.o -o OmegaTech $(CFLAGS) $(LDFLAGS) -L. -l:Custom.so -Wl,-rpath=.
